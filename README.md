@@ -240,7 +240,7 @@ Member	Role / Responsibilities	GitHub / Profile
 Abhinandan Kumar	Lead Frontend Developer & System Architect	@ABHINANDAN9905
 [Shashank Katiyar]	Research and problem statement 	@shashankkatiyar4444-ui
 [Subrat Panigrahi]	UI/UX Design & Frontend Development	@Subu2006
-[Member 4 Name]	Documentation & Testing	@Sumit
+[Sumit Kumar Singh]	Documentation & Testing	@Sumit1080
 🤝 Contributing
 Fork the repository.
 
