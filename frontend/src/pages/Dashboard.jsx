@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { useCrops } from '../hooks/useCrops';
 import { useMandis } from '../hooks/useMandis';
 import { usePrices } from '../hooks/usePrices';
@@ -26,12 +27,13 @@ import {
   Sparkles,
   MapPin,
   Share2,
-  Wheat
+  Wheat,
+  Info
 } from 'lucide-react';
 
 export const Dashboard = () => {
   const { t } = useLanguage();
-
+  const { user } = useAuth();
 
   // State Management
   const [selectedState, setSelectedState] = useState('Maharashtra');
@@ -47,6 +49,22 @@ export const Dashboard = () => {
   // Modals & Drawers
   const [explainingResult, setExplainingResult] = useState(null);
   const [detailedMandi, setDetailedMandi] = useState(null);
+
+  // Auto-sync when farmer logs in
+  useEffect(() => {
+    if (user) {
+      if (user.state) setSelectedState(user.state);
+      if (user.district) setSelectedDistrict(user.district);
+      if (user.village) setVillageName(user.village);
+      if (user.preferredCrop) {
+        const cropObj = CROPS.find(
+          c => c.id.toLowerCase() === user.preferredCrop.toLowerCase() ||
+               c.name.toLowerCase() === user.preferredCrop.toLowerCase()
+        );
+        if (cropObj) setSelectedCrop(cropObj);
+      }
+    }
+  }, [user]);
 
   // Handle State selection change with auto district sync
   const handleStateChange = (newState) => {
@@ -101,16 +119,24 @@ export const Dashboard = () => {
     rankedResults,
     bestResult,
     closestResult,
+    summary,
+    bestRecommendation,
+    dataSource,
+    isFallback,
     historicalTrends,
     loading: pricesLoading,
     recalculate
   } = usePrices({
     cropId: selectedCrop?.id || 'onion',
+    cropName: selectedCrop?.name || 'Onion',
     variety: selectedCrop?.variety?.[0] || '',
     quantity: quantity,
     mandis: mandis,
     vehicleRate: customRatePerKm,
-    baseLoadingFee: selectedVehicle?.baseLoadingFee || 300
+    baseLoadingFee: selectedVehicle?.baseLoadingFee || 300,
+    state: selectedState,
+    district: selectedDistrict,
+    farmerCoords: farmerCoords
   });
 
   // Quick Scenario Loaders (for Judges & Demo)
@@ -133,7 +159,7 @@ export const Dashboard = () => {
       setQuantity(25);
       setSelectedVehicle(VEHICLE_PRESETS[1]);
       setCustomRatePerKm(14);
-    } else if (scenario === 'wheat') {
+    } else if (scenario === 'wheat-punjab') {
       const wheat = CROPS.find(c => c.id === 'wheat');
       if (wheat) setSelectedCrop(wheat);
       setSelectedState('Punjab');
@@ -142,6 +168,15 @@ export const Dashboard = () => {
       setQuantity(50);
       setSelectedVehicle(VEHICLE_PRESETS[2]); // Tractor
       setCustomRatePerKm(18);
+    } else if (scenario === 'wheat-haryana') {
+      const wheat = CROPS.find(c => c.id === 'wheat');
+      if (wheat) setSelectedCrop(wheat);
+      setSelectedState('Haryana');
+      setSelectedDistrict('Gurugram');
+      setVillageName('Sohna Road Node');
+      setQuantity(20);
+      setSelectedVehicle(VEHICLE_PRESETS[1]);
+      setCustomRatePerKm(14);
     } else if (scenario === 'soybean') {
       const soy = CROPS.find(c => c.id === 'soybean');
       if (soy) setSelectedCrop(soy);
@@ -154,36 +189,90 @@ export const Dashboard = () => {
     }
   };
 
-  // Voice Input Parsing
+  // Voice & Natural Language Query Parsing
   const handleVoiceDetected = (phrase) => {
-    const p = phrase.toLowerCase();
+    if (!phrase) return;
+    const p = phrase.toLowerCase().trim();
     
-    // Check for crop matches
-    CROPS.forEach(c => {
-      if (p.includes(c.name.toLowerCase()) || p.includes(c.id) || (c.hindiName && p.includes('प्याज') && c.id === 'onion')) {
-        setSelectedCrop(c);
+    // 1. Crop Detection
+    let matchedCrop = null;
+    for (const c of CROPS) {
+      const names = [
+        c.name.toLowerCase(),
+        c.id.toLowerCase(),
+        ...(c.hindiName ? c.hindiName.toLowerCase().split(/[\s()]+/) : []),
+        ...(c.marathiName ? c.marathiName.toLowerCase().split(/[\s()]+/) : [])
+      ];
+      if (names.some(n => n.length >= 2 && p.includes(n))) {
+        matchedCrop = c;
+        break;
       }
-    });
-
-    // Check for quantities (e.g. 10 quintal, 25 q)
-    const qtyMatch = p.match(/\b(\d+)\s*(quintal|quental|q|क्विंटल|टन|ton)?/i);
-    if (qtyMatch && qtyMatch[1]) {
-      setQuantity(Number(qtyMatch[1]));
     }
 
-    // Check for location
-    if (p.includes('nashik') || p.includes('नाशिक')) {
-      setSelectedState('Maharashtra');
-      setSelectedDistrict('Nashik');
-    } else if (p.includes('kolar') || p.includes('कोलार')) {
-      setSelectedState('Karnataka');
-      setSelectedDistrict('Kolar');
-    } else if (p.includes('indore') || p.includes('इंदौर')) {
-      setSelectedState('Madhya Pradesh');
-      setSelectedDistrict('Indore');
-    } else if (p.includes('punjab') || p.includes('khanna') || p.includes('पंजाब')) {
-      setSelectedState('Punjab');
-      setSelectedDistrict('Khanna');
+    if (!matchedCrop) {
+      if (p.includes('gehu') || p.includes('गेहूं') || p.includes('गहू') || p.includes('wheat') || p.includes('kanak')) {
+        matchedCrop = CROPS.find(c => c.id === 'wheat');
+      } else if (p.includes('pyaj') || p.includes('pyaz') || p.includes('प्याज') || p.includes('कांदा') || p.includes('onion') || p.includes('kanda')) {
+        matchedCrop = CROPS.find(c => c.id === 'onion');
+      } else if (p.includes('tamatar') || p.includes('टमाटर') || p.includes('टोमॅटो') || p.includes('tomato')) {
+        matchedCrop = CROPS.find(c => c.id === 'tomato');
+      } else if (p.includes('aalu') || p.includes('aloo') || p.includes('आलू') || p.includes('बटाटा') || p.includes('potato') || p.includes('batata')) {
+        matchedCrop = CROPS.find(c => c.id === 'potato');
+      } else if (p.includes('soyabean') || p.includes('soybean') || p.includes('सोयाबीन')) {
+        matchedCrop = CROPS.find(c => c.id === 'soybean');
+      } else if (p.includes('lasun') || p.includes('lahsun') || p.includes('लहसुन') || p.includes('लसूण') || p.includes('garlic')) {
+        matchedCrop = CROPS.find(c => c.id === 'garlic');
+      } else if (p.includes('mirchi') || p.includes('chilli') || p.includes('मिर्च') || p.includes('मिरची') || p.includes('chili')) {
+        matchedCrop = CROPS.find(c => c.id === 'chilli');
+      } else if (p.includes('kapas') || p.includes('cotton') || p.includes('कपास') || p.includes('कापूस')) {
+        matchedCrop = CROPS.find(c => c.id === 'cotton');
+      }
+    }
+    if (matchedCrop) {
+      setSelectedCrop(matchedCrop);
+    }
+
+    // 2. Quantity Detection (e.g. 10 quintal, 25 q, 50 टन, 500 kg)
+    const qtyMatch = p.match(/(\d+)\s*(quintal|quental|quintals|q|क्विंटल|टन|ton|tons|kg|किलो)?/i);
+    if (qtyMatch && qtyMatch[1]) {
+      let q = Number(qtyMatch[1]);
+      if (p.includes('kg') || p.includes('किलो')) {
+        q = Math.max(1, Math.round(q / 100));
+      } else if (p.includes('ton') || p.includes('टन')) {
+        q = q * 10;
+      }
+      setQuantity(Math.max(1, q));
+    }
+
+    // 3. Location Detection across all states & districts
+    let matchedLocation = false;
+    for (const stateObj of STATES_AND_DISTRICTS) {
+      for (const dist of stateObj.districts) {
+        if (
+          p.includes(dist.name.toLowerCase()) ||
+          (dist.hub && p.includes(dist.hub.toLowerCase())) ||
+          (dist.name.toLowerCase() === 'gurugram' && (p.includes('gurgaon') || p.includes('गुड़गांव') || p.includes('गुरुग्राम'))) ||
+          (dist.name.toLowerCase() === 'khanna' && p.includes('खन्ना')) ||
+          (dist.name.toLowerCase() === 'nashik' && (p.includes('नासिक') || p.includes('नाशिक'))) ||
+          (dist.name.toLowerCase() === 'indore' && p.includes('इंदौर')) ||
+          (dist.name.toLowerCase() === 'kolar' && p.includes('कोलार'))
+        ) {
+          setSelectedState(stateObj.state);
+          setSelectedDistrict(dist.name);
+          setVillageName(dist.hub || dist.name);
+          matchedLocation = true;
+          break;
+        }
+      }
+      if (matchedLocation) break;
+
+      if (p.includes(stateObj.state.toLowerCase()) || (stateObj.hindi && p.includes(stateObj.hindi))) {
+        setSelectedState(stateObj.state);
+        setSelectedDistrict(stateObj.districts[0].name);
+        setVillageName(stateObj.districts[0].hub || stateObj.districts[0].name);
+        matchedLocation = true;
+        break;
+      }
     }
   };
 
@@ -228,7 +317,13 @@ export const Dashboard = () => {
               🍅 {t('scenario2')}
             </button>
             <button
-              onClick={() => handleQuickScenario('wheat')}
+              onClick={() => handleQuickScenario('wheat-haryana')}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
+            >
+              🌾 Wheat (Haryana)
+            </button>
+            <button
+              onClick={() => handleQuickScenario('wheat-punjab')}
               className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-bold text-white transition-all active:scale-95 flex items-center gap-1.5"
             >
               🌾 {t('scenario3')}
@@ -270,6 +365,8 @@ export const Dashboard = () => {
               onSelectCategory={setCategory}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
+              selectedState={selectedState}
+              selectedDistrict={selectedDistrict}
             />
           </div>
 
@@ -355,14 +452,26 @@ export const Dashboard = () => {
               />
             </div>
 
-            {/* Price Freshness Badge */}
-            {bestResult && <PriceFreshness result={bestResult} />}
+            {/* Price Freshness Badge & Data Source Banner */}
+            <div className="space-y-2">
+              {bestResult && (
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <PriceFreshness result={bestResult} />
+                  {isFallback && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold">
+                      <Info className="w-3 h-3" /> DEMO DATA
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Winner Realisation Card */}
+          {/* Winner Realisation Card & Earnings Calculator (Section 9 & 14) */}
           {bestResult && (
             <PriceCard
               bestResult={bestResult}
+              bestRecommendation={bestRecommendation}
               crop={selectedCrop}
               quantity={quantity}
             />
@@ -419,7 +528,7 @@ export const Dashboard = () => {
                     : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
-                Price Trends & Risk
+                Price Analytics & Chart
               </button>
             </div>
 
@@ -443,7 +552,7 @@ export const Dashboard = () => {
             />
           )}
 
-          {/* Tab 2: Comparison Table Matrix */}
+          {/* Tab 2: Comparison Table Matrix (Section 12) */}
           {activeTab === 'table' && (
             <PriceTable
               results={rankedResults}
@@ -452,7 +561,7 @@ export const Dashboard = () => {
             />
           )}
 
-          {/* Tab 3: Interactive Radial Map */}
+          {/* Tab 3: Interactive Radial Map (Section 8) */}
           {activeTab === 'map' && (
             <MandiMap
               results={rankedResults}
@@ -461,21 +570,24 @@ export const Dashboard = () => {
             />
           )}
 
-          {/* Tab 4: Historical Trends & Analytics */}
+          {/* Tab 4: Price Analytics & Bar Chart (Section 12 & 13) */}
           {activeTab === 'trends' && (
             <div className="space-y-6">
+              <PriceSummary bestResult={bestResult} crop={selectedCrop} summary={summary} />
               <PriceChart
+                results={rankedResults}
                 trends={historicalTrends}
                 cropName={selectedCrop?.name}
-                mandiName={bestResult?.mandi?.name}
+                mandiName={bestResult?.mandi?.name || bestResult?.market}
               />
-              <PriceSummary bestResult={bestResult} crop={selectedCrop} />
             </div>
           )}
         </div>
       ) : (
         <div className="p-8 text-center bg-white rounded-3xl border border-slate-200">
-          No mandi prices found for the selected configuration.
+          <p className="text-sm font-semibold text-slate-700">
+            Unable to fetch mandi prices right now. Please try selecting a different crop or location.
+          </p>
         </div>
       )}
 

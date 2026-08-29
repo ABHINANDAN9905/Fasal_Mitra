@@ -1,3 +1,4 @@
+import api from './api';
 import { ALL_MANDIS } from '../constants/location';
 
 const distanceKm = (fromLat, fromLng, toLat, toLng) => {
@@ -13,6 +14,23 @@ const distanceKm = (fromLat, fromLng, toLat, toLng) => {
 };
 
 export const getMandis = async ({ state, district, cropId, farmerLat, farmerLng }) => {
+  try {
+    const res = await api.get('/v1/mandis', {
+      params: {
+        state,
+        district,
+        cropId,
+        lat: farmerLat,
+        lng: farmerLng
+      }
+    });
+    if (res.data && res.data.success && res.data.mandis) {
+      return res.data.mandis;
+    }
+  } catch (err) {
+    console.warn('Backend mandis API unavailable, falling back to local dataset:', err.message);
+  }
+
   const normalizedState = state?.toLowerCase();
   const normalizedDistrict = district?.toLowerCase();
 
@@ -38,5 +56,14 @@ export const getMandis = async ({ state, district, cropId, farmerLat, farmerLng 
 };
 
 export const getMandiById = async (id) => {
+  try {
+    const res = await api.get(`/v1/mandis/${id}`);
+    if (res.data && res.data.success && res.data.mandi) {
+      return res.data.mandi;
+    }
+  } catch (err) {
+    console.warn('Backend mandi profile API unavailable, falling back:', err.message);
+  }
   return ALL_MANDIS.find((mandi) => mandi.id === id) || null;
 };
+

@@ -3,7 +3,6 @@ import CropCard from './CropCard';
 import { useLanguage } from '../../context/LanguageContext';
 import { Search } from 'lucide-react';
 
-
 export const CropSelector = ({
   crops = [],
   selectedCrop,
@@ -12,7 +11,9 @@ export const CropSelector = ({
   activeCategory,
   onSelectCategory,
   searchQuery,
-  onSearchChange
+  onSearchChange,
+  selectedState = 'Maharashtra',
+  selectedDistrict = 'Nashik'
 }) => {
   const { t } = useLanguage();
 
@@ -58,6 +59,8 @@ export const CropSelector = ({
             crop={crop}
             isSelected={selectedCrop?.id === crop.id}
             onSelect={onSelectCrop}
+            selectedState={selectedState}
+            selectedDistrict={selectedDistrict}
           />
         ))}
       </div>

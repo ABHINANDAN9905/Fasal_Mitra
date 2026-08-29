@@ -134,9 +134,12 @@ export const STATES_AND_DISTRICTS = [
     totalApms: 114,
     enamLinkedPercent: 96,
     districts: [
+      { name: 'Gurugram', defaultPincode: '122001', hub: 'Gurugram Grain Market', lat: 28.4595, lng: 77.0266, topCrop: 'Wheat & Mustard', soilType: 'Sandy Loam', mandisCount: 5 },
       { name: 'Karnal', defaultPincode: '132001', hub: 'Karnal Grain & Basmati Market', lat: 29.6857, lng: 76.9905, topCrop: 'Basmati Rice & Wheat', soilType: 'Alluvial Loam', mandisCount: 8 },
       { name: 'Sirsa', defaultPincode: '125055', hub: 'Sirsa Grain & Cotton Mandi', lat: 29.5349, lng: 75.0290, topCrop: 'Cotton & Wheat', soilType: 'Light Loam', mandisCount: 7 },
-      { name: 'Hisar', defaultPincode: '125001', hub: 'Hisar Dana Mandi', lat: 29.1492, lng: 75.7217, topCrop: 'Mustard, Wheat & Cotton', soilType: 'Sandy Loam', mandisCount: 6 }
+      { name: 'Hisar', defaultPincode: '125001', hub: 'Hisar Dana Mandi', lat: 29.1492, lng: 75.7217, topCrop: 'Mustard, Wheat & Cotton', soilType: 'Sandy Loam', mandisCount: 6 },
+      { name: 'Ambala', defaultPincode: '134003', hub: 'Ambala Cantt Grain Mandi', lat: 30.3782, lng: 76.7767, topCrop: 'Wheat & Paddy', soilType: 'Alluvial Loam', mandisCount: 5 },
+      { name: 'Rohtak', defaultPincode: '124001', hub: 'Rohtak New Grain Market', lat: 28.8955, lng: 76.6066, topCrop: 'Wheat & Mustard', soilType: 'Medium Loam', mandisCount: 6 }
     ]
   },
   {
@@ -520,6 +523,84 @@ export const ALL_MANDIS = [
     dailyArrivalTonnes: 4100,
     crowdLevel: 'Moderate',
     primaryCommodities: ['wheat', 'potato', 'cotton']
+  },
+
+  // Haryana Cluster
+  {
+    id: 'gurugram-grain-mandi',
+    name: 'Gurugram APMC Grain Market',
+    marathiName: 'गुरुग्राम धान्य बाजार',
+    hindiName: 'गुरुग्राम अनाज मंडी',
+    state: 'Haryana',
+    district: 'Gurugram',
+    lat: 28.4601,
+    lng: 77.0280,
+    marketFeePercent: 1.0,
+    weighingFeePerQuintal: 3,
+    unloadingFeePerQuintal: 6,
+    isEnamLinked: true,
+    rating: 4.6,
+    facilities: ['Electronic Weighbridge', 'e-NAM Live Bidding', 'Covered Grain Sheds'],
+    dailyArrivalTonnes: 2400,
+    crowdLevel: 'Moderate',
+    primaryCommodities: ['wheat', 'mustard', 'potato', 'onion']
+  },
+  {
+    id: 'karnal-grain-mandi',
+    name: 'Karnal New Grain Market',
+    marathiName: 'कर्नाल नवीन धान्य बाजार',
+    hindiName: 'करनाल नई अनाज मंडी',
+    state: 'Haryana',
+    district: 'Karnal',
+    lat: 29.6880,
+    lng: 76.9930,
+    marketFeePercent: 1.0,
+    weighingFeePerQuintal: 3,
+    unloadingFeePerQuintal: 5.5,
+    isEnamLinked: true,
+    rating: 4.8,
+    facilities: ['Basmati & Wheat Hub', 'High Speed Cleaners', 'FCI Procurement Desk'],
+    dailyArrivalTonnes: 5600,
+    crowdLevel: 'High',
+    primaryCommodities: ['wheat', 'potato', 'cotton']
+  },
+  {
+    id: 'hisar-dana-mandi',
+    name: 'Hisar Main Dana Mandi',
+    marathiName: 'हिसार दाणा मंडी',
+    hindiName: 'हिसार दाना मंडी',
+    state: 'Haryana',
+    district: 'Hisar',
+    lat: 29.1520,
+    lng: 75.7250,
+    marketFeePercent: 1.05,
+    weighingFeePerQuintal: 3.5,
+    unloadingFeePerQuintal: 6,
+    isEnamLinked: true,
+    rating: 4.5,
+    facilities: ['Mustard Oil Testing', 'Direct Miller Counters'],
+    dailyArrivalTonnes: 3100,
+    crowdLevel: 'Moderate',
+    primaryCommodities: ['wheat', 'cotton', 'soybean']
+  },
+  {
+    id: 'sirsa-cotton-mandi',
+    name: 'Sirsa Mega Cotton & Grain Market',
+    marathiName: 'सिरसा कापूस व धान्य बाजार',
+    hindiName: 'सिरसा विशाल कपास व अनाज मंडी',
+    state: 'Haryana',
+    district: 'Sirsa',
+    lat: 29.5370,
+    lng: 75.0320,
+    marketFeePercent: 1.0,
+    weighingFeePerQuintal: 3,
+    unloadingFeePerQuintal: 6,
+    isEnamLinked: true,
+    rating: 4.7,
+    facilities: ['Cotton Quality Assayer', 'Digital Weighbridge', 'Direct Mill Link'],
+    dailyArrivalTonnes: 4900,
+    crowdLevel: 'High',
+    primaryCommodities: ['cotton', 'wheat', 'mustard']
   },
 
   // Uttar Pradesh Cluster

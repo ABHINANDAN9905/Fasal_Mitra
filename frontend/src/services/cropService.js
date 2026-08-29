@@ -1,9 +1,24 @@
+import api from './api';
 import { CROPS, CROP_CATEGORIES } from '../constants/crop';
 
 /**
  * Fetch crops filtered by category and search query.
  */
 export const getCrops = async (category = 'All', searchQuery = '') => {
+  try {
+    const res = await api.get('/v1/crops', {
+      params: {
+        category,
+        search: searchQuery
+      }
+    });
+    if (res.data && res.data.success && res.data.crops) {
+      return res.data.crops;
+    }
+  } catch (err) {
+    console.warn('Backend crops API unavailable, falling back:', err.message);
+  }
+
   let filtered = [...CROPS];
 
   if (category && category !== 'All') {
@@ -38,6 +53,14 @@ export const getCropCategories = () => {
  * Get a specific crop by ID.
  */
 export const getCropById = async (id) => {
+  try {
+    const res = await api.get(`/v1/crops/${id}`);
+    if (res.data && res.data.success && res.data.crop) {
+      return res.data.crop;
+    }
+  } catch (err) {
+    console.warn('Backend crop profile API unavailable, falling back:', err.message);
+  }
   return CROPS.find((c) => c.id === id) || null;
 };
 
@@ -45,5 +68,14 @@ export const getCropById = async (id) => {
  * Get all crops.
  */
 export const getAllCrops = async () => {
+  try {
+    const res = await api.get('/v1/crops');
+    if (res.data && res.data.success && res.data.crops) {
+      return res.data.crops;
+    }
+  } catch (err) {
+    console.warn('Backend all crops API unavailable, falling back:', err.message);
+  }
   return CROPS;
 };
+

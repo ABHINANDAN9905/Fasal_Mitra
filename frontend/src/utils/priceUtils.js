@@ -130,17 +130,17 @@ export const generateWhatsAppShare = (bestResult, crop, locationName) => {
  */
 export const getFreshnessLabel = (dateStr) => {
   if (!dateStr) {
-    return { label: 'Today (Live)', labelHi: 'आज (ताजा भाव)', color: 'success' };
+    return { label: 'Latest available mandi price', labelHi: 'नवीनतम उपलब्ध मंडी भाव', color: 'info' };
   }
   const today = new Date().toISOString().slice(0, 10);
   if (dateStr === today) {
-    return { label: 'Today (Live)', labelHi: 'आज (ताजा भाव)', color: 'success' };
+    return { label: `Latest available mandi price (${dateStr})`, labelHi: `आज का उपलब्ध भाव (${dateStr})`, color: 'success' };
   }
   const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
   if (dateStr === yesterday) {
-    return { label: 'Yesterday', labelHi: 'कल का भाव', color: 'warning' };
+    return { label: `Latest available mandi price (${dateStr})`, labelHi: `कल का उपलब्ध भाव (${dateStr})`, color: 'warning' };
   }
-  return { label: 'Recent (e-NAM)', labelHi: 'हालिया भाव', color: 'info' };
+  return { label: `Latest available mandi price (${dateStr})`, labelHi: `नवीनतम उपलब्ध भाव (${dateStr})`, color: 'info' };
 };
 
 /**
