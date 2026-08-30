@@ -1,269 +1,1362 @@
-# 🌾 Fasal Mitra (फसल मित्र)
+# 🌾 Fasal Mitra
 
-> **Smart Technology for Smarter Farming**  
-> *Compare. Choose. Sell Smarter.*
+### Smart Technology for Smarter Farming
 
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+> **Compare. Choose. Sell Smarter.**
 
----
+Fasal Mitra is a farmer-centric digital platform designed to help farmers make **better crop-selling decisions** by bringing mandi discovery, agricultural market prices, location intelligence, logistics, weather information, and AI-powered agricultural assistance into a single easy-to-use platform.
 
-## 💡 Overview & Problem Statement
-
-Smallholder farmers often struggle to obtain real-time, transparent market rates across regional agricultural mandis. Existing portals either overwhelm users with raw, unstructured tables or lack crucial location-based context (such as transit distance), forcing farmers to rely on middlemen or sell at suboptimal rates.
-
-**Fasal Mitra** is a farmer-centric mandi discovery and crop price comparison platform designed around real-world agricultural decision-making. Instead of dumping raw data, it structures information into an actionable, location-aware workflow.
-
-👨‍🌾 FARMER
-│
-▼
-🌾 SELECT CROP
-│
-▼
-📍 SELECT / DETECT LOCATION
-│
-▼
-🏪 FIND MANDIS
-│
-▼
-💰 GET PRICE DATA
-│
-▼
-📊 COMPARE PRICES
-│
-▼
-📏 CHECK DISTANCE
-│
-▼
-🏆 BETTER OPTION
-
+Instead of forcing farmers to search through complex market datasets or depend entirely on middlemen for price information, Fasal Mitra transforms agricultural market information into a **simple, actionable decision-support experience**.
 
 ---
 
-## 🎯 Objectives
+## 📌 Table of Contents
 
-1. **Simplify Crop Price Discovery:** Provide a visual, clean interface to explore daily market rates.
-2. **Streamline Mandi Discovery:** Help farmers find all operational APMC mandis within their radius.
-3. **Multi-Mandi Price Comparison:** Compare commodity prices side-by-side across multiple mandis.
-4. **Location Context & Distance:** Factor in transit distance so farmers can evaluate logistics overhead.
-5. **Farmer-Centric Accessibility:** Lightweight UI built for varied digital literacy and multi-language support.
-
----
-
-## 🚀 Key Features
-
-* **🌾 Intuitive Crop Selection:** Fast visual picker for grains, pulses, oilseeds, fruits, and vegetables.
-* **🏪 Mandi Discovery Engine:** Lists local markets with operational status, distance, and daily arrivals.
-* **💰 Real-Time Price Comparison:** Side-by-side price breakdowns (Min, Modal/Average, Max rates per quintal).
-* **📍 Distance & Route Awareness:** Calculates distance from user coordinates to each candidate mandi.
-* **🌐 Multilingual Architecture:** Extensible i18n localization support for regional Indian languages.
-* **📱 Mobile-First Responsive Design:** Fully optimized across desktop, tablet, and low-end mobile devices.
-
----
-
-## 📊 Price & Distance Comparison Model
-
-       WHEAT (Gehu)
-Mandi A (8 km)   ─── ₹2,100 / Quintal
-Mandi B (15 km)  ─── ₹2,350 / Quintal  <-- Higher rate
-Mandi C (25 km)  ─── ₹2,200 / Quintal
-
-
-### Market Metrics Summary
-
-| Mandi Name | Price / Quintal | Distance | Net Advantage Indicator |
-| :--- | :--- | :--- | :--- |
-| **Mandi A** | ₹2,100 | 8 km | Nearest location, lower base price |
-| **Mandi B** | ₹2,350 | 15 km | **Highest return** (covers extra 7 km travel) |
-| **Mandi C** | ₹2,200 | 25 km | Moderate rate, higher transit overhead |
+* [Problem Statement](#-problem-statement)
+* [Our Solution](#-our-solution)
+* [Key Features](#-key-features)
+* [How Fasal Mitra Works](#-how-fasal-mitra-works)
+* [System Architecture](#-system-architecture)
+* [Application Workflow](#-application-workflow)
+* [Data Flow](#-data-flow)
+* [AI Architecture](#-ai-architecture)
+* [Price Comparison Logic](#-price-comparison-logic)
+* [Technology Stack](#-technology-stack)
+* [Project Structure](#-project-structure)
+* [Backend Architecture](#-backend-architecture)
+* [Frontend Architecture](#-frontend-architecture)
+* [API Modules](#-api-modules)
+* [Environment Variables](#-environment-variables)
+* [Installation & Setup](#-installation--setup)
+* [Running the Project](#-running-the-project)
+* [Production Build](#-production-build)
+* [Example Use Case](#-example-use-case)
+* [Why Fasal Mitra](#-why-fasal-mitra)
+* [Future Scope](#-future-scope)
+* [Team Algo X](#-team-algo-x)
+* [Contributing](#-contributing)
+* [License](#-license)
+* [Acknowledgements](#-acknowledgements)
 
 ---
 
-## 🏗️ System Architecture
+# 🚨 Problem Statement
 
-Fasal Mitra follows a modular, layered frontend architecture separating state management, business rules, and presentation:
+Indian farmers often face a major challenge after producing their crops:
 
-┌─────────────────────────────────────────────┐
-│                 USER LAYER                  │
-│                  👨‍🌾 Farmer                 │
-└──────────────────────┬──────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────┐
-│              PRESENTATION LAYER             │
-│              React Components               │
-│ Navbar | Hero | Search | Cards | Dashboard  │
-└──────────────────────┬──────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────┐
-│                 PAGE LAYER                  │
-│ Home | Dashboard | Mandi Details            │
-└──────────────────────┬──────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────┐
-│                LOGIC LAYER                  │
-│ Custom Hooks | Context | Application Logic  │
-└──────────────────────┬──────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────┐
-│                SERVICE LAYER                │
-│ Crop | Mandi | Price | Location Services    │
-└──────────────────────┬──────────────────────┘
-│
-▼
-┌─────────────────────────────────────────────┐
-│                 DATA LAYER                  │
-│ Market Data | Price Data | Location Data    │
-└─────────────────────────────────────────────┘
+> **Where should I sell my crop to get a better return?**
 
+Market prices can vary between different mandis. However, farmers may not have a simple way to compare:
 
-### Data Flow
+* Different mandi prices
+* Minimum, modal/average and maximum prices
+* Mandi distance
+* Market availability
+* Transportation considerations
+* Historical price information
+* Weather conditions
+* Potential selling returns
 
-[User Input] ──► [React UI Component] ──► [Custom Hook] ──► [Service Layer]
-│
-[Farmer Display] ◄── [UI Render] ◄── [Processed Data] ◄──────────┘
+Government agricultural datasets can also be difficult for ordinary users to understand because they are often presented as large and complex datasets.
 
+As a result, farmers may:
+
+* Sell without knowing the best available price.
+* Travel to a mandi without comparing alternatives.
+* Depend heavily on intermediaries for market information.
+* Lose potential income because of limited access to actionable information.
 
 ---
 
-## 🛠️ Tech Stack
+# 💡 Our Solution
 
-| Domain | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Core Framework** | React.js (v18+) | Component-based interactive UI |
-| **Tooling & Bundler** | Vite | Lightning-fast HMR and production builds |
-| **Styling** | Tailwind CSS | Utility-first, responsive design system |
-| **Routing** | React Router DOM | Client-side page and view routing |
-| **Iconography** | Lucide React | Clean, lightweight SVG UI icons |
-| **State & Context** | React Hooks & Context API | Application-wide language and filter state |
+## Fasal Mitra
+
+Fasal Mitra converts complex agricultural market information into a **farmer-friendly decision-support platform**.
+
+The core workflow is:
+
+```text
+👨‍🌾 Farmer
+     ↓
+🌾 Select Crop
+     ↓
+📍 Select / Detect Location
+     ↓
+🏪 Discover Nearby Mandis
+     ↓
+💰 Fetch Market Prices
+     ↓
+📊 Compare Prices
+     ↓
+📏 Consider Distance
+     ↓
+🚚 Consider Logistics
+     ↓
+🧮 Estimate Potential Return
+     ↓
+🏆 Make a Better Selling Decision
+```
+
+The platform is designed around one simple question:
+
+> **"Where should I sell my crop?"**
 
 ---
 
-## 📂 Directory Structure
+# 🚀 Key Features
+
+## 🌾 1. Smart Crop Selection
+
+Farmers can select the crop they want to sell through an easy-to-use interface.
+
+The system supports agricultural commodities through structured crop data.
+
+Examples:
+
+* Wheat
+* Rice
+* Onion
+* Potato
+* Tomato
+* Pulses
+* Oilseeds
+* Fruits
+* Vegetables
+* Other agricultural commodities
+
+---
+
+## 🏪 2. Mandi Discovery
+
+Fasal Mitra helps users discover relevant agricultural markets based on their selected location and crop.
+
+Mandi information can include:
+
+* Mandi name
+* Location
+* District
+* State
+* Distance
+* Operational information
+* Available market information
+
+---
+
+## 💰 3. Crop Price Comparison
+
+The application compares agricultural market prices across different mandis.
+
+Price information can include:
+
+* Minimum price
+* Modal / average price
+* Maximum price
+* Price per quintal
+* Market/date information
+* Price freshness
+
+Example:
+
+```text
+             WHEAT PRICE COMPARISON
+
+Mandi A       ₹2,100 / Quintal      8 km
+Mandi B       ₹2,350 / Quintal     15 km ⭐
+Mandi C       ₹2,200 / Quintal     25 km
+```
+
+This allows the farmer to quickly identify potentially better selling opportunities.
+
+---
+
+# 📍 4. Location Intelligence
+
+Location plays an important role in agricultural selling decisions.
+
+Fasal Mitra uses location information to help users understand:
+
+```text
+Farmer Location
+       ↓
+Nearby District
+       ↓
+Nearby Mandis
+       ↓
+Distance Comparison
+```
+
+The frontend includes location selection for:
+
+* State
+* District
+* Location
+* Mandi
+
+---
+
+# 🗺️ 5. Mandi Map
+
+The platform provides a visual representation of mandi locations.
+
+The map-based interface helps farmers understand:
+
+* Where a mandi is located
+* Relative distance
+* Nearby markets
+* Available selling options
+
+---
+
+# 📊 6. Price Analytics
+
+Fasal Mitra includes price visualization components that make market information easier to understand.
+
+The application provides:
+
+* Price summaries
+* Price comparison tables
+* Price rankings
+* Price charts
+* Historical price information
+* Price freshness indicators
+
+Instead of only displaying raw numbers, the system presents information visually.
+
+---
+
+# 📈 7. Historical Price Analysis
+
+The backend includes a dedicated historical-price service.
+
+Historical data can help farmers understand:
+
+* Previous market prices
+* Price movement
+* Market trends
+* Changes over time
+
+This creates a foundation for future price forecasting.
+
+---
+
+# 🧮 8. Net Return Calculation
+
+Getting a higher mandi price does not always mean getting a higher final return.
+
+Transportation and logistics costs can reduce the actual amount received by a farmer.
+
+Fasal Mitra therefore includes a dedicated **net return calculation layer**.
+
+Conceptually:
+
+```text
+Gross Selling Value
+        -
+Transportation / Logistics Cost
+        =
+Estimated Net Return
+```
+
+This moves the application beyond simple price comparison toward **real-world selling decisions**.
+
+---
+
+# 🚚 9. Logistics Support
+
+The backend contains a dedicated logistics service and vehicle dataset.
+
+This creates a foundation for considering:
+
+* Transportation
+* Vehicle options
+* Distance
+* Estimated logistics cost
+* Selling economics
+
+---
+
+# 🌦️ 10. Weather Information
+
+Weather-related functionality is integrated into the backend architecture.
+
+Weather information can provide additional context for farmers when making agricultural decisions.
+
+The backend contains:
+
+```text
+weatherController
+weatherRoutes
+weatherService
+```
+
+---
+
+# 🤖 11. AI-Powered Agricultural Assistance
+
+Fasal Mitra integrates Google's Gemini AI through the backend.
+
+The AI layer is designed to support agricultural assistance such as crop-image analysis and natural-language interaction.
+
+### Crop Disease Assistance
+
+A farmer can provide a crop/leaf image.
+
+The workflow is:
+
+```text
+Crop Leaf Image
+       ↓
+React Frontend
+       ↓
+Backend AI API
+       ↓
+Gemini AI Service
+       ↓
+AI Analysis
+       ↓
+Agricultural Recommendation
+       ↓
+Farmer
+```
+
+The system can provide advisory information such as:
+
+* Possible crop disease
+* Severity
+* Suggested treatment
+* Preventive measures
+
+> AI-generated agricultural information should be treated as advisory and should be validated with qualified agricultural experts for important decisions.
+
+---
+
+# 🗣️ 12. Natural-Language Farmer Interaction
+
+The project also includes a backend AI service designed to process natural-language farmer queries.
+
+For example:
+
+```text
+"Mere paas 25 quintal onion hai.
+Nashik mein kahan bechna better rahega?"
+```
+
+The system can identify important information such as:
+
+```text
+Crop       → Onion
+Quantity   → 25 Quintal
+Location   → Nashik
+Intent      → Find better selling option
+```
+
+This creates the foundation for a more natural and accessible farmer experience.
+
+---
+
+# 🌐 13. Multilingual Architecture
+
+Fasal Mitra includes a language context and translation structure in the frontend.
+
+This allows the platform to be extended for regional Indian languages.
+
+The goal is to reduce language barriers and make agricultural technology more accessible to farmers.
+
+---
+
+# 🧑‍💼 14. Merchant Portal
+
+The application also contains a merchant-oriented workflow.
+
+The architecture includes:
+
+```text
+Merchant Context
+Merchant Services
+Merchant Routes
+Merchant Controller
+Merchant Portal
+```
+
+This creates a foundation for connecting farmers with agricultural buyers and creating a broader agricultural marketplace ecosystem.
+
+---
+
+# 🏗️ System Architecture
+
+Fasal Mitra follows a **modular client-server architecture**.
+
+```text
+                         👨‍🌾 FARMER
+                             │
+                             ▼
+              ┌─────────────────────────┐
+              │       FRONTEND          │
+              │      React + Vite       │
+              │                         │
+              │  Crop Selection         │
+              │  Location Selection     │
+              │  Mandi Discovery        │
+              │  Price Comparison       │
+              │  Charts                 │
+              │  Maps                   │
+              │  Dashboard              │
+              │  AI Interface           │
+              └────────────┬────────────┘
+                           │
+                           │ HTTP / REST API
+                           ▼
+              ┌─────────────────────────┐
+              │        BACKEND          │
+              │    Node.js + Express    │
+              │                         │
+              │       Routes            │
+              │          ↓              │
+              │     Controllers         │
+              │          ↓              │
+              │       Services          │
+              └────────────┬────────────┘
+                           │
+          ┌────────────────┼────────────────┐
+          │                │                │
+          ▼                ▼                ▼
+ ┌────────────────┐ ┌──────────────┐ ┌───────────────┐
+ │ Agmarknet /    │ │  Gemini AI   │ │ Local/Fallback│
+ │ data.gov.in    │ │              │ │ Agricultural  │
+ │ Market Data    │ │ AI Services  │ │ Data          │
+ └────────────────┘ └──────────────┘ └───────────────┘
+          │                │                │
+          └────────────────┼────────────────┘
+                           ▼
+                  Processed Information
+                           │
+                           ▼
+                    Farmer Dashboard
+```
+
+---
+
+# 🔄 Application Workflow
+
+A typical user journey looks like this:
+
+```text
+1. Farmer opens Fasal Mitra
+              ↓
+2. Selects crop
+              ↓
+3. Selects state/district/location
+              ↓
+4. System identifies relevant mandis
+              ↓
+5. Backend requests market information
+              ↓
+6. Market data is normalized
+              ↓
+7. Prices are compared
+              ↓
+8. Distance and logistics are considered
+              ↓
+9. Potential return is calculated
+              ↓
+10. Results are displayed visually
+              ↓
+11. Farmer chooses a suitable selling option
+```
+
+---
+
+# 🔄 Data Flow
+
+```text
+┌──────────────┐
+│ Farmer Input │
+└──────┬───────┘
+       ↓
+┌────────────────────┐
+│ React UI Components│
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Custom React Hooks │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Frontend Services  │
+└─────────┬──────────┘
+          ↓
+     REST API
+          ↓
+┌────────────────────┐
+│ Express Routes     │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Controllers        │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Business Services  │
+└─────────┬──────────┘
+          ↓
+ ┌────────┼─────────┐
+ ↓        ↓         ↓
+Agmarknet Gemini   Local Data
+ ↓        ↓         ↓
+ └────────┼─────────┘
+          ↓
+   Data Normalization
+          ↓
+   Business Processing
+          ↓
+     JSON Response
+          ↓
+┌────────────────────┐
+│ React Components   │
+└─────────┬──────────┘
+          ↓
+┌────────────────────┐
+│ Farmer Dashboard   │
+└────────────────────┘
+```
+
+---
+
+# 🤖 AI Architecture
+
+The AI subsystem follows a separate service-oriented flow.
+
+```text
+                 Farmer
+                   │
+          ┌────────┴────────┐
+          │                 │
+       Text Query        Leaf Image
+          │                 │
+          └────────┬────────┘
+                   ↓
+            React Frontend
+                   ↓
+              /api/ai
+                   ↓
+           AI Controller
+                   ↓
+          Gemini AI Service
+                   ↓
+            Gemini Model
+                   ↓
+         Structured Response
+                   ↓
+             Frontend UI
+                   ↓
+               Farmer
+```
+
+Keeping AI communication inside the backend prevents the frontend from directly managing sensitive AI configuration and keeps AI logic modular.
+
+---
+
+# 💰 Price Comparison Architecture
+
+Market price processing follows:
+
+```text
+Government Market Data
+          ↓
+   Agmarknet Service
+          ↓
+    Price Service
+          ↓
+   Price Normalizer
+          ↓
+ Standardized Price Data
+          ↓
+ Price Ranking / Analysis
+          ↓
+     Frontend Display
+```
+
+The `priceNormalizer` utility helps standardize different price-data formats before they are presented to users.
+
+---
+
+# 🛠️ Technology Stack
+
+## Frontend
+
+| Technology            | Purpose                                         |
+| --------------------- | ----------------------------------------------- |
+| **React 19**          | Interactive component-based UI                  |
+| **Vite**              | Development server and production build tooling |
+| **Tailwind CSS**      | Responsive styling                              |
+| **Axios**             | HTTP/API communication                          |
+| **Recharts**          | Price and analytics visualization               |
+| **Lucide React**      | UI icons                                        |
+| **React Hooks**       | Local state and reusable logic                  |
+| **React Context API** | Shared application state                        |
+
+---
+
+## Backend
+
+| Technology                   | Purpose                         |
+| ---------------------------- | ------------------------------- |
+| **Node.js**                  | Backend runtime                 |
+| **Express.js**               | REST API framework              |
+| **Axios**                    | External API communication      |
+| **Google Generative AI SDK** | Gemini AI integration           |
+| **Helmet**                   | HTTP security headers           |
+| **CORS**                     | Cross-origin API access         |
+| **Compression**              | Response compression            |
+| **dotenv**                   | Environment configuration       |
+| **Multer**                   | File/image upload handling      |
+| **Zod**                      | Request/data validation         |
+| **Nodemon**                  | Development server auto-restart |
+
+---
+
+# 📂 Project Structure
 
 ```text
 Fasal_Mitra/
+│
+├── Backend/
+│   ├── src/
+│   │   ├── config/
+│   │   │   └── env.js
+│   │   │
+│   │   ├── controllers/
+│   │   │   ├── aiController.js
+│   │   │   ├── authController.js
+│   │   │   ├── calculationController.js
+│   │   │   ├── cropController.js
+│   │   │   ├── locationController.js
+│   │   │   ├── logisticsController.js
+│   │   │   ├── mandiController.js
+│   │   │   ├── merchantController.js
+│   │   │   ├── notificationController.js
+│   │   │   ├── priceController.js
+│   │   │   └── weatherController.js
+│   │   │
+│   │   ├── data/
+│   │   │   ├── cropsData.js
+│   │   │   ├── locationData.js
+│   │   │   ├── mandisData.js
+│   │   │   └── vehiclesData.js
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── aiRoutes.js
+│   │   │   ├── authRoutes.js
+│   │   │   ├── cropRoutes.js
+│   │   │   ├── locationRoutes.js
+│   │   │   ├── logisticsRoutes.js
+│   │   │   ├── mandiRoutes.js
+│   │   │   ├── merchantRoutes.js
+│   │   │   ├── notificationRoutes.js
+│   │   │   ├── priceRoutes.js
+│   │   │   ├── v1Router.js
+│   │   │   └── weatherRoutes.js
+│   │   │
+│   │   ├── services/
+│   │   │   ├── agmarknetService.js
+│   │   │   ├── authService.js
+│   │   │   ├── geminiAiService.js
+│   │   │   ├── historicalPriceService.js
+│   │   │   ├── logisticsService.js
+│   │   │   ├── mandiService.js
+│   │   │   ├── merchantService.js
+│   │   │   ├── netReturnService.js
+│   │   │   ├── notificationService.js
+│   │   │   ├── priceService.js
+│   │   │   └── weatherService.js
+│   │   │
+│   │   ├── utils/
+│   │   │   └── priceNormalizer.js
+│   │   │
+│   │   ├── app.js
+│   │   └── server.js
+│   │
+│   └── package.json
+│
 ├── frontend/
 │   ├── public/
-│   │   └── favicon.ico
+│   │   ├── logo.png
+│   │   ├── logo.svg
+│   │   └── favicon.png
+│   │
 │   ├── src/
-│   │   ├── assets/             # Static graphics and icons
 │   │   ├── components/
-│   │   │   ├── common/         # Buttons, Badges, Loaders, Navbar, Footer
-│   │   │   ├── mandis/         # Mandi cards, lists, and detail views
-│   │   │   ├── map/            # Location cards and distance indicators
-│   │   │   └── prices/         # Price summary cards, comparison tables
-│   │   ├── constants/          # Crop lists, fallback mandi datasets
-│   │   ├── context/            # LanguageContext, LocationContext
-│   │   ├── hooks/              # useCrops, useMandis, usePrices, useLocation
-│   │   ├── pages/              # Home, Dashboard, MandiDetails, NotFound
-│   │   ├── services/           # cropService, mandiService, priceService
-│   │   ├── utils/              # Distance calculators, price formatters
+│   │   │   ├── analytics/
+│   │   │   ├── auth/
+│   │   │   ├── common/
+│   │   │   ├── crops/
+│   │   │   ├── layout/
+│   │   │   ├── location/
+│   │   │   ├── mandis/
+│   │   │   ├── map/
+│   │   │   └── prices/
+│   │   │
+│   │   ├── constants/
+│   │   │   ├── crop.js
+│   │   │   ├── location.js
+│   │   │   └── translation.js
+│   │   │
+│   │   ├── context/
+│   │   │   ├── AuthContext.jsx
+│   │   │   ├── LanguageContext.jsx
+│   │   │   ├── MerchantContext.jsx
+│   │   │   └── ThemeContext.jsx
+│   │   │
+│   │   ├── hooks/
+│   │   │   ├── useCrops.js
+│   │   │   ├── useMandis.js
+│   │   │   └── usePrices.js
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Dashboard.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── MandiDetails.jsx
+│   │   │   └── MerchantPortal.jsx
+│   │   │
+│   │   ├── services/
+│   │   │   ├── aiService.js
+│   │   │   ├── api.js
+│   │   │   ├── authService.js
+│   │   │   ├── cropService.js
+│   │   │   ├── locationService.js
+│   │   │   ├── mandiService.js
+│   │   │   ├── merchantService.js
+│   │   │   ├── priceService.js
+│   │   │   └── weatherService.js
+│   │   │
+│   │   ├── utils/
+│   │   │   ├── formatDistance.js
+│   │   │   ├── formatPrice.js
+│   │   │   └── priceUtils.js
+│   │   │
 │   │   ├── App.jsx
+│   │   ├── App.css
 │   │   ├── main.jsx
 │   │   └── index.css
-│   ├── index.html
+│   │
 │   ├── package.json
-│   ├── tailwind.config.js
 │   └── vite.config.js
+│
+├── .gitignore
 └── README.md
-⚙️ Installation & Local Setup
-Prerequisites
-Node.js (v16.x or higher recommended)
+```
 
-npm (v8.x or higher) or yarn / pnpm
+---
 
-Git
+# 🧩 Backend Architecture
 
-Step-by-Step Setup
-Clone the repository:
+The backend follows a modular structure:
 
-Bash
-git clone [https://github.com/ABHINANDAN9905/Fasal_Mitra.git](https://github.com/ABHINANDAN9905/Fasal_Mitra.git)
-cd Fasal_Mitra
-Navigate to the frontend directory:
+```text
+                    Express Application
+                           │
+                           ▼
+                       Routes
+                           │
+                           ▼
+                      Controllers
+                           │
+                           ▼
+                       Services
+                           │
+                           ▼
+                   External / Local Data
+```
 
-Bash
-cd frontend
-Install project dependencies:
+### Routes
 
-Bash
-npm install
-Configure Environment Variables:
-Create a .env file in the frontend/ directory (referencing .env.example if available):
+Routes define API endpoints.
 
-Code snippet
+Examples:
+
+```text
+/api/prices
+/api/mandis
+/api/crops
+/api/locations
+/api/ai
+/api/weather
+/api/logistics
+/api/notifications
+/api/auth
+/api/merchant
+```
+
+### Controllers
+
+Controllers receive requests and coordinate the required application logic.
+
+### Services
+
+Services contain domain-specific logic.
+
+Examples:
+
+```text
+agmarknetService
+priceService
+mandiService
+weatherService
+logisticsService
+geminiAiService
+historicalPriceService
+netReturnService
+```
+
+This separation makes the backend easier to maintain and extend.
+
+---
+
+# 🌐 API Modules
+
+The backend exposes modular API groups.
+
+| API Module                     | Purpose                            |
+| ------------------------------ | ---------------------------------- |
+| `/api/prices`                  | Crop market price operations       |
+| `/api/mandis`                  | Mandi discovery and information    |
+| `/api/crops`                   | Crop information                   |
+| `/api/locations`               | Location-related operations        |
+| `/api/states`                  | State information                  |
+| `/api/states/:state/districts` | District lookup                    |
+| `/api/ai`                      | AI-powered agricultural assistance |
+| `/api/weather`                 | Weather functionality              |
+| `/api/logistics`               | Transportation/logistics           |
+| `/api/notifications`           | Notification functionality         |
+| `/api/auth`                    | Authentication                     |
+| `/api/merchant`                | Merchant functionality             |
+| `/api/v1/*`                    | Versioned API architecture         |
+| `/health`                      | Backend health check               |
+
+---
+
+# 🔐 Security & Performance
+
+The backend includes several production-oriented middleware components.
+
+### Helmet
+
+Used to add security-related HTTP headers.
+
+### CORS
+
+Controls cross-origin communication between frontend and backend.
+
+### Compression
+
+Compresses HTTP responses to reduce transfer size.
+
+### Environment Variables
+
+Sensitive configuration is stored outside the source code using `.env`.
+
+### Validation
+
+Zod is included for structured request/data validation.
+
+---
+
+# ⚙️ Environment Variables
+
+## Backend
+
+Create:
+
+```text
+Backend/.env
+```
+
+Use the provided `.env.example` as a reference.
+
+Typical configuration includes values for:
+
+```env
+PORT=5000
+FRONTEND_URL=http://localhost:5173
+
+AGMARKNET_API_KEY=your_api_key
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+> Never commit real API keys or secrets to GitHub.
+
+---
+
+## Frontend
+
+Create:
+
+```text
+frontend/.env
+```
+
+Example:
+
+```env
 VITE_API_BASE_URL=http://localhost:5000/api
-Start the local development server:
+```
 
-Bash
+---
+
+# 📦 Installation & Setup
+
+## Prerequisites
+
+Make sure you have:
+
+* Node.js
+* npm
+* Git
+* Internet connection for external APIs
+* Required API keys configured in `.env`
+
+---
+
+# 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/ABHINANDAN9905/Fasal_Mitra.git
+```
+
+```bash
+cd Fasal_Mitra
+```
+
+---
+
+# 2️⃣ Install Backend Dependencies
+
+```bash
+cd Backend
+npm install
+```
+
+---
+
+# 3️⃣ Configure Backend Environment
+
+Create:
+
+```text
+Backend/.env
+```
+
+Copy the required variables from:
+
+```text
+Backend/.env.example
+```
+
+Add your API credentials where required.
+
+---
+
+# 4️⃣ Start Backend
+
+For development:
+
+```bash
 npm run dev
-Open http://localhost:5173 (or the URL shown in your terminal) in your browser.
+```
 
-Create a Production Build:
+For production:
 
-Bash
+```bash
+npm start
+```
+
+The backend runs on the configured port, typically:
+
+```text
+http://localhost:5000
+```
+
+Health check:
+
+```text
+http://localhost:5000/health
+```
+
+---
+
+# 5️⃣ Install Frontend Dependencies
+
+Open another terminal:
+
+```bash
+cd frontend
+npm install
+```
+
+---
+
+# 6️⃣ Configure Frontend
+
+Create:
+
+```text
+frontend/.env
+```
+
+Example:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+---
+
+# 7️⃣ Start Frontend
+
+```bash
+npm run dev
+```
+
+Vite will provide a local development URL, typically:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# 🏗️ Production Build
+
+To create an optimized frontend production build:
+
+```bash
+cd frontend
 npm run build
+```
+
+To preview the production build:
+
+```bash
 npm run preview
-🧪 Verification & Demo Checklist
-[x] Application compiles cleanly via npm run build without bundling errors.
+```
 
-[x] Dynamic crop selection updates filtered mandi lists.
+---
 
-[x] Geo-distance calculator outputs valid distances in kilometers.
+# 🧪 Verification Checklist
 
-[x] Price cards display Min, Max, and Modal values per Quintal.
+Before a hackathon demo, verify:
 
-[x] Language toggle context propagates across all active UI views.
+```text
+[x] Frontend starts successfully
+[x] Backend starts successfully
+[x] /health endpoint responds
+[x] Frontend communicates with backend
+[x] Crop selection works
+[x] Location selection works
+[x] Mandi discovery works
+[x] Price comparison works
+[x] Price cards render correctly
+[x] Charts render correctly
+[x] Mandi details open correctly
+[x] AI functionality is configured
+[x] Environment variables are configured
+[x] Responsive layout works
+```
 
-[x] Responsive breakpoint check passed across Mobile (360px+), Tablet, and Desktop.
+---
 
-🔮 Future Roadmap
-🤖 AI Price Prediction: Time-series ML models forecasting commodity rates 7–14 days in advance.
+# 🧑‍🌾 Example Use Case
 
-🚚 Transit Cost Estimator: Real-time net-profit calculator subtracting estimated diesel/trucking freight charges from gross mandi earnings.
+### Scenario
 
-🗣️ Multilingual Voice Interface: Speech-to-text queries supporting Hindi, Punjabi, Marathi, Bengali, and other regional languages.
+A farmer has:
 
-🔔 Price Threshold Alerts: WhatsApp and SMS notifications when a target mandi crosses a designated sell price.
+```text
+Crop       → Onion
+Quantity   → 25 Quintals
+Location   → Nashik
+```
 
-📲 Progressive Web App (PWA): Offline-first caching for regions with intermittent field connectivity.
+The farmer opens Fasal Mitra.
 
-👥 Team Algo X
-Member	Role / Responsibilities	GitHub / Profile
-Abhinandan Kumar	Lead Frontend Developer & System Architect	@ABHINANDAN9905
-[Shashank Katiyar]	Research and problem statement 	@shashankkatiyar4444-ui
-[Subrat Panigrahi]	UI/UX Design & Frontend Development	@Subu2006
-[Sumit Kumar Singh]	Documentation & Testing	@Sumit1080
-🤝 Contributing
-Fork the repository.
+### Step 1
 
-Create your feature branch:
+Select:
 
-Bash
+```text
+Onion
+```
+
+### Step 2
+
+Select:
+
+```text
+Maharashtra
+→ Nashik
+```
+
+### Step 3
+
+Fasal Mitra discovers relevant mandis.
+
+### Step 4
+
+The backend retrieves/processes available market price information.
+
+### Step 5
+
+The application displays:
+
+```text
+Mandi A
+Price: ₹X / Quintal
+Distance: X km
+
+Mandi B
+Price: ₹Y / Quintal
+Distance: X km ⭐
+
+Mandi C
+Price: ₹Z / Quintal
+Distance: X km
+```
+
+### Step 6
+
+The farmer can compare the options and consider the potential selling return.
+
+This transforms:
+
+> **Raw agricultural data**
+
+into:
+
+> **Actionable agricultural information.**
+
+---
+
+# 🏆 Why Fasal Mitra?
+
+Fasal Mitra is not just another agricultural information dashboard.
+
+The platform focuses on **decision support**.
+
+### Traditional approach
+
+```text
+Farmer
+  ↓
+Search multiple sources
+  ↓
+Check prices manually
+  ↓
+Compare mandis manually
+  ↓
+Estimate travel cost
+  ↓
+Make decision
+```
+
+### Fasal Mitra approach
+
+```text
+Farmer
+  ↓
+Select Crop + Location
+  ↓
+Fasal Mitra
+  ↓
+Price + Mandi + Distance
+  ↓
+Logistics + Return
+  ↓
+Better Decision
+```
+
+---
+
+# 📈 Future Scope
+
+## 🤖 AI-Based Price Forecasting
+
+Future versions can use historical price data and machine-learning models to forecast possible price trends.
+
+```text
+Historical Prices
+       ↓
+ML Model
+       ↓
+Price Forecast
+       ↓
+Selling Recommendation
+```
+
+---
+
+## 🚚 Advanced Transportation Cost Estimation
+
+Integrate:
+
+* Fuel prices
+* Vehicle capacity
+* Distance
+* Transportation rates
+* Loading/unloading costs
+
+to provide more accurate net-return estimates.
+
+---
+
+## 🔔 Price Alerts
+
+Farmers could set a target:
+
+```text
+"Notify me when onion price
+crosses ₹3,000/quintal."
+```
+
+Notifications could be delivered through:
+
+* SMS
+* WhatsApp
+* Push notifications
+
+---
+
+## 🗣️ Multilingual Voice Assistant
+
+Support voice-based farmer interaction in languages such as:
+
+* Hindi
+* Marathi
+* Punjabi
+* Bengali
+* Telugu
+* Tamil
+* Kannada
+* Gujarati
+
+Example:
+
+> "Mere paas 20 quintal gehun hai, sabse achha bhav kahan milega?"
+
+---
+
+## 📱 Progressive Web App
+
+A PWA version could provide:
+
+* Offline caching
+* Low-bandwidth operation
+* Mobile installation
+* Better field usability
+
+---
+
+## 🔗 Broader Agricultural Ecosystem
+
+Future integrations could include:
+
+* Government agricultural services
+* Farmer organizations
+* Agricultural experts
+* Transport providers
+* Buyers and merchants
+* Warehouses
+* Cold storage
+* Agricultural finance
+
+---
+
+# 👥 Team Algo X
+
+| Team Member           | Role                                       |
+| --------------------- | ------------------------------------------ |
+| **Abhinandan Kumar**  | Lead Frontend Developer & System Architect |
+| **Shashank Katiyar**  | Research & Problem Statement               |
+| **Subrat Panigrahi**  | UI/UX Design & Frontend Development        |
+| **Sumit Kumar Singh** | Documentation & Testing                    |
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome.
+
+### 1. Fork the repository
+
+### 2. Create a feature branch
+
+```bash
 git checkout -b feature/AmazingFeature
-Commit your changes:
+```
 
-Bash
-git commit -m "feat: add mandi distance calculation caching"
-Push to the branch:
+### 3. Commit your changes
 
-Bash
+```bash
+git commit -m "feat: add new mandi comparison feature"
+```
+
+### 4. Push the branch
+
+```bash
 git push origin feature/AmazingFeature
-Open a Pull Request with a detailed overview of your improvements.
+```
 
-📜 License
-Distributed under the MIT License. See LICENSE for details.
+### 5. Open a Pull Request
 
-🙏 Acknowledgements
-Data Sources: Open government data initiatives (data.gov.in / Agmarknet).
+Provide a clear description of the feature or improvement.
 
-Community: Hackathon mentors, reviewers, and open-source library maintainers.
+---
 
-Farmers of India: The inspiration behind building accessible agritech solutions.
+# 📜 License
+
+This project is distributed under the MIT License.
+
+See the `LICENSE` file for more information.
+
+---
+
+# 🙏 Acknowledgements
+
+We would like to acknowledge:
+
+* **Government agricultural open-data initiatives**
+* **Agmarknet / data.gov.in** for agricultural market data
+* **Google Gemini** for AI capabilities
+* Open-source software and libraries used throughout the project
+* Hackathon mentors and organizers
+* Farmers of India, who inspired the problem we are solving
+
+---
+
+# 🌾 Our Vision
+
+We believe technology should not make farming more complicated.
+
+It should make decisions **simpler**.
+
+Fasal Mitra aims to bridge the gap between:
+
+```text
+Agricultural Data
+       ↓
+Information
+       ↓
+Understanding
+       ↓
+Better Decision
+       ↓
+Better Farmer Opportunity
+```
+
+### **🌾 Fasal Mitra**
+
+> **Compare. Choose. Sell Smarter.**
+
+---
+
+## ⭐ Built with ❤️ by Team Algo X
